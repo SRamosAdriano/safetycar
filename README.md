@@ -25,6 +25,6 @@ Antes executar o projeto:
 Acesso para a aplicação
 ---------------------
 
-URL para acesso: http://localhost:8080/safetycar/
-Login: adriano.ramos
-Pass: admin (minusculas)s 
+URL para acesso: http://localhost:8080/safetycar/ <br>
+Login: adriano.ramos <br>
+Pass: admin (minusculas)

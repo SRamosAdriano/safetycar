@@ -1,0 +1,193 @@
+package br.com.intelignet.controle.paginacao;
+
+import java.util.*;
+
+import javax.servlet.http.*;
+
+import org.springframework.validation.*;
+import org.springframework.web.bind.*;
+import org.springframework.web.servlet.*;
+
+import br.com.intelignet.controle.*;
+import br.com.intelignet.controle.paginacao.form.*;
+import br.com.intelignet.dao.*;
+import br.com.intelignet.modelo.*;
+import br.com.intelignet.seguranca.*;
+import br.com.intelignet.util.*;
+
+/**
+ * Controlador básico de paginação. Pode ser usado sozinho ou herdado para maiores
+ * especializações.
+ */
+public class ControladorPaginacao extends AbstractMultiActionFormController {
+
+	public static final String PARAMETRO_PAGINA = "pagina";
+	public static final String PARAMETRO_ID = "id";
+	
+	private Usuario usuario;
+	private DAO<Persistente> dao;
+	private Paginador paginador;
+	private Autorizador autorizador;
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+	
+	public Usuario getUsuario() {
+		return usuario;
+	}
+	
+	public void setDao(DAO<Persistente> dao) {
+		this.dao = dao;
+	}
+	
+	public DAO<Persistente> getDao() {
+		return dao;
+	}
+
+	public void setPaginador(Paginador paginador) {
+		this.paginador = paginador;
+	}
+	
+	public Paginador getPaginador() {
+		return paginador;
+	}
+	
+	public Autorizador getAutorizador() {
+		return autorizador;
+	}
+	
+	public void setAutorizador(Autorizador autorizador) {
+		this.autorizador = autorizador;
+	}
+	
+	public ModelAndView paginar(HttpServletRequest request,
+							    HttpServletResponse response,
+							    FiltragemForm form,
+							    BindException errors)
+	throws Exception {
+		return showForm(request, errors);
+	}
+
+	public ModelAndView filtrar(HttpServletRequest request,
+							    HttpServletResponse response,
+							    FiltragemForm form,
+							    BindException errors)
+	throws Exception {
+		return showForm(request, errors);
+	}
+
+	public ModelAndView remover(HttpServletRequest request,
+							    HttpServletResponse response,
+							    FiltragemForm form,
+							    BindException errors)
+	throws Exception {
+		SegurancaUtils.autorizarRemocao(getUsuario(), getAutorizador(), request);
+		
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		boolean removeu = verificarEExecutarRemover(request,map);
+		
+		ModelAndView modelAndView = showForm(request, errors);
+		
+		if (!removeu) {
+			modelAndView.addObject("remocaoNegada", true);
+		}		
+		modelAndView.addAllObjects(map);
+
+		return modelAndView;
+	}
+
+	public ModelAndView prossegueExclusao(HttpServletRequest request,
+											HttpServletResponse response,
+											FiltragemForm form,
+											BindException errors)
+	throws Exception {
+
+		long id = ServletRequestUtils.getLongParameter(request, PARAMETRO_ID, -1);
+		if (id != -1) {
+			Persistente obj = getDao().recuperar(id);
+			if (obj != null) {
+				prossegueExclusao(obj);
+			}
+		}
+
+		ModelAndView modelAndView = showForm(request, errors);
+		return modelAndView;
+	}
+
+	protected void prossegueExclusao(Persistente obj) {
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
+		FiltragemForm form = (FiltragemForm)command;
+		form.setListaPaginacao(getListaPaginacao(request, form.getFiltros()));
+
+		return super.referenceData(request, command, errors);
+	}
+
+	/**
+	 * Verifica e executa a remoção dos objetos especificados pela requisição.
+	 * 
+	 * @param request Requisição.
+	 * @return True se removeu, false se não encontrou os objetos especificados
+	 * ou teve a remoção negada.
+	 */
+	protected boolean verificarEExecutarRemover(HttpServletRequest request, Map<String, Object> map) {
+		long id = ServletRequestUtils.getLongParameter(request, PARAMETRO_ID, -1);
+		boolean retorno = false;
+		if (id != -1) {
+			Persistente obj = getDao().recuperar(id);
+			if (obj != null){
+				if(podeRemover(obj)) {
+					executarRemover(obj);
+					retorno = true;
+					executarRemocaoObjectosAssociados(obj);
+				}else {
+					executarRemocaoNegada(obj,map);
+				}
+			}
+		}
+		return retorno;
+	}
+	
+	/**Metodo sobrescrito na ControladorPaginacaoPredios.
+	 * @param obj
+	 */
+	protected void executarRemocaoObjectosAssociados(Persistente obj) {
+		
+	}
+
+	protected void executarRemover(Persistente obj) {
+		getDao().remover(obj.getId());
+	}
+
+	protected ListaPaginacao getListaPaginacao(HttpServletRequest request, Filtro... filtros) {
+		int paginaAtual = ServletRequestUtils.getIntParameter(request, PARAMETRO_PAGINA, 1);
+
+		return getPaginador().paginar(paginaAtual, filtros);
+	}
+
+	/**
+	 * Indica se pode remover o objeto especificado.
+	 * 
+	 * @param obj Objeto persistente.
+	 * @return True se pode remover.
+	 */
+	protected boolean podeRemover(Persistente obj) {
+		return true;
+	}
+	
+	/**
+	 * é executado quando o metodo podeRemover retornou false.
+	 * Quando é sobrescrito, adiciona os nomes dos objetos que estao associados ao objeto que 
+	 * tentou-se remover, ao map, para a exibicao das informacoes na tela.
+	 * @param obj O objeto que tentou-se remover.
+	 * @param map 
+	 * */
+	protected void executarRemocaoNegada(Persistente obj, Map<String, Object> map) {
+	}
+}

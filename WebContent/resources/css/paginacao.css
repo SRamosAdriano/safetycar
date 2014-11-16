@@ -1,0 +1,67 @@
+.paginationTable {
+	font-family: Times, serif;
+	font-size: 16px;
+	border: 1px solid #666;
+	width: 100%;
+	margin-top: 5px;
+}
+
+.paginationTable td {
+	padding: 2px 4px 2px 4px !important;
+	text-align: left;
+}
+
+.paginationTable th {
+	background-color: #EEEEEE;
+}
+
+.odd {
+	background-color: #FFFFFF;
+}
+
+.even {
+	background-color: #E3E6EF;
+}
+
+.empty {
+	text-align: center;
+}
+
+.pagebanner {
+	font-family: Verdana, Arial, Helvetica, Sans-Serif;
+	font-size: 10px;
+	background-color: #EEE;
+	border: 1px dotted #999;
+	padding-top: 2px;
+	padding-left: 4px;
+	padding-bottom: 2px;
+	padding-right: 4px;
+	width: 100%;
+	margin-top: 10px;
+	display: block;
+	margin-bottom: 2px;
+	text-align: center;
+}
+
+.pagelinks {
+	font-family: Verdana, Arial, Helvetica, Sans-Serif;
+	font-size: 10px;
+	background-color: #EEE;
+	border: 1px dotted #999;
+	padding-top: 2px;
+	padding-left: 4px;
+	padding-bottom: 2px;
+	padding-right: 4px;
+	width: 100%;
+	display: block;
+	margin-bottom: 5px;
+	text-align: center;
+}
+
+.sorted {
+	cursor: pointer;
+}
+    
+img.sortIndicator {
+	margin-left: 3px;
+}

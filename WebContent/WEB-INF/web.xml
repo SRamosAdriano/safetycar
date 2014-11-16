@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	
+	<servlet>
+		<servlet-name>spring</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>spring</servlet-name>
+		<url-pattern>/21/*</url-pattern>
+	</servlet-mapping>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<!-- Mapeamento dos arquivos de configuração do spring -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/applicationContext*.xml</param-value>
+	</context-param>
+	<!-- fim mapeamento arquivos spring -->
+	
+	<!-- Raiz da aplicação para uso de WebAppRootListener e Log4JConfigListener -->
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>safetycar.root</param-value>
+	</context-param>
+		
+	<!--Servlet DWR - que efetua a integração do DWR com o spring  -->
+	<servlet>
+		<servlet-name>dwr</servlet-name>
+		<servlet-class>org.directwebremoting.spring.DwrSpringServlet</servlet-class>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>crossDomainSessionSecurity</param-name>
+			<param-value>false</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>dwr</servlet-name>
+		<url-pattern>/dwr/*</url-pattern>
+	</servlet-mapping>
+	<!-- Fim servlet DWR -->
+	
+	
+	<!-- Tempo Limite de Login -->
+	<session-config>
+		<session-timeout>10</session-timeout>
+	</session-config>
+
+	<!-- Pagina inicial -->
+	<welcome-file-list>
+		<welcome-file>/WEB-INF/jsp/login/inicio.html</welcome-file>
+	</welcome-file-list>
+	
+	<!-- Paginas de erro -->
+    <error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/WEB-INF/jsp/erros/erro.jsp</location>
+	</error-page>	
+	
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/WEB-INF/jsp/erros/erro.jsp</location>
+	</error-page>
+  
+    <error-page>
+  		<error-code>404</error-code>
+  		<location>/WEB-INF/jsp/erros/erro404.jsp</location>
+	</error-page>
+	
+	
+	
+</web-app>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"	
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	   		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	   		http://www.springframework.org/schema/context
+	   		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/mvc 
+			http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+			http://www.directwebremoting.org/schema/spring-dwr
+       		http://directwebremoting.org/schema/spring-dwr-3.0.xsd">
+	
+	
+	<!-- Configurações Spring -->
+	<context:annotation-config />		
+	<context:component-scan base-package="br.com.safetycar.controller" />	
+	<mvc:annotation-driven />
+		
+	<mvc:interceptors>
+		<bean class="br.com.safetycar.controller.adm.AutorizadorInterceptor" />
+	</mvc:interceptors> 	
+	
+	
+	<!-- Configurações de inicialização da Engine do DWR -->
+	<bean id="dwrHandlerMappings"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="order" value="1" />
+		<property name="alwaysUseFullPath" value="true"></property>
+		<property name="mappings">
+			<props>
+				<prop key="/dwr/**/*">dwrController</prop>
+				<prop key="/dwr/*">dwrController</prop>
+				<prop key="/engine.js">dwrController</prop>
+				<prop key="/util.js">dwrController</prop>
+				<prop key="/interface/**">dwrController</prop>
+				<prop key="/call/**">dwrController</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- Configurações do DWRControle que é o controlador do DWR -->
+	<dwr:controller id="dwrController" debug="true">
+		<dwr:config-param name="activeReverseAjaxEnabled"
+			value="true" />
+	</dwr:controller>
+	
+	
+	<!-- Nosso bean do DWR que converte nosso método find dentro da classe UsuarioAjax em um metodo javascript -->
+	<bean id="dwrUsuario" class="br.com.adriano.dwr.UsuarioAjax">
+		<dwr:remote javascript="usuarioAjax">
+			<dwr:include method="find" />
+		</dwr:remote>
+		<property name="usuario" ref="usuarioBean"/>
+	</bean>
+	
+	<bean id="cadClienteFornecedorDwr" class="br.com.safetycar.dwr.CadastroCliForAjaxDwr">
+		<dwr:remote javascript="cadastroCliForAjaxDwr">
+			<dwr:include method="addClienteFornecedor" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="altClienteFornecedorDwr" class="br.com.safetycar.dwr.AlteracaoCadastroClifForAjaxDwr">
+		<dwr:remote javascript="alteraCadastroCliForAjaxDwr">
+			<dwr:include method="altClienteFornecedor" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="cadVeiculosDwr" class="br.com.safetycar.dwr.CadastroVeiculosAjaxDwr">
+		<dwr:remote javascript="cadastroVeiculosAjaxDwr">
+			<dwr:include method="addVeiculo" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="altVeiculosDwr" class="br.com.safetycar.dwr.AlteracaoCadastroVeiculosAjaxDwr">
+		<dwr:remote javascript="alteraCadastroVeiculosAjaxDwr">
+			<dwr:include method="altVeiculo" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="cadFornecedorDespesasDwr" class="br.com.safetycar.dwr.CadastroFornecedorDespesasAjaxDwr">
+		<dwr:remote javascript="cadastroFornecedorDespesasAjaxDwr">
+			<dwr:include method="addFornecedorDespesas" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="altFornecedorDespesasDwr" class="br.com.safetycar.dwr.AlteracaoCadastroFornecedorDesepesasAjaxDwr">
+		<dwr:remote javascript="alteraCadastroFornecedorDespesasAjaxDwr">
+			<dwr:include method="altFornecedorDespesas" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="cadLancamentoGastosVeiculoDwr" class="br.com.safetycar.dwr.LancamentoGastosVeiculoAjaxDwr">
+		<dwr:remote javascript="cadastroLancamentoGastosVeiculoAjaxDwr">
+			<dwr:include method="addGastoVeiculo" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="lancamentoVlComissaoEVendaVeiculoDwr" class="br.com.safetycar.dwr.LancamentoVlComissaoEVendaVeiculoAjaxDwr">
+		<dwr:remote javascript="lancamentoVlComissaoEVendaVeiculoAjaxDwr">
+			<dwr:include method="addVlComissaoEVendaVeiculo" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="cadVendedorDwr" class="br.com.safetycar.dwr.CadastroVendedorAjaxDwr">
+		<dwr:remote javascript="cadastroVendedorAjaxDwr">
+			<dwr:include method="addVendedor" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="altVendedorDwr" class="br.com.safetycar.dwr.AlteracaoCadastroVendedorAjaxDwr">
+		<dwr:remote javascript="alteraCadastroVendedorAjaxDwr">
+			<dwr:include method="altVendedor" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="cadVendaVeiculoDwr" class="br.com.safetycar.dwr.CadastroVendaVeiculoAjaxDwr">
+		<dwr:remote javascript="cadastroVendaVeiculoAjaxDwr">
+			<dwr:include method="addVendaVeiculo" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="altVendaVeiculoDwr" class="br.com.safetycar.dwr.AlteracaoCadastroVendaVeiculoAjaxDwr">
+		<dwr:remote javascript="alteraVendaVeiculoAjaxDwr">
+			<dwr:include method="altVendaVeiculo" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="cadGrupoDwr" class="br.com.safetycar.dwr.adm.CadastroGrupoAjaxDwr">
+		<dwr:remote javascript="cadastroGrupoAjaxDwr">
+			<dwr:include method="addGrupo" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="altGrupoDwr" class="br.com.safetycar.dwr.adm.AlteracaoCadastroGrupoAjaxDwr">
+		<dwr:remote javascript="alteraCadastroGrupoAjaxDwr">
+			<dwr:include method="altGrupo" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="cadUsuariosDwr" class="br.com.safetycar.dwr.adm.CadastroUsuariosAjaxDwr">
+		<dwr:remote javascript="cadastroUsuariosAjaxDwr">
+			<dwr:include method="addUsuarios" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="altUsuariosDwr" class="br.com.safetycar.dwr.adm.AlteracaoCadastroUsuariosAjaxDwr">
+		<dwr:remote javascript="alteraCadastroUsuariosAjaxDwr">
+			<dwr:include method="altUsuarios" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="resetSenhaDwr" class="br.com.safetycar.dwr.adm.ResetSenhaLoginsAjaxDwr">
+		<dwr:remote javascript="resetSenhaLoginsAjaxDwr">
+			<dwr:include method="resetSenhaLogin" />
+		</dwr:remote>		
+	</bean>
+	
+	<bean id="altSenhaUsuarioDwr" class="br.com.safetycar.dwr.adm.AlteracaoSenhaUsuarioAjaxDwr">
+		<dwr:remote javascript="alteraSenhaUsuarioAjaxDwr">
+			<dwr:include method="altSenhaUsuario" />
+		</dwr:remote>		
+	</bean>
+	
+	
+	<!-- RELATORIOS -->
+	
+	<bean id="relatorioVeiculosDisponiveisAjaxDwr" class="br.com.safetycar.dwr.relatorios.RelatorioVeiculosDisponiveisAjaxDwr">
+		<dwr:remote javascript="relatorioVeiculosDisponiveisAjaxDwr">
+			<dwr:include method="consultaDetVeiculoDisp" />
+		</dwr:remote>
+		<property name="veiculosDispVenda" ref="relatorioVeiculosDisponiveis"/>	
+	</bean>
+	
+	
+	
+	<dwr:configuration>
+		 <dwr:convert type="bean" class="br.com.adriano.bean.UsuarioBean" />
+		 <dwr:convert type="bean" class="br.com.safetycar.modelos.ClienteFornecedor" />
+		 <dwr:convert type="bean" class="br.com.safetycar.modelos.Veiculos" />
+		 <dwr:convert type="bean" class="br.com.safetycar.modelos.VeiculosOpcionais" />
+		 <dwr:convert type="bean" class="br.com.safetycar.modelos.CompraVeiculo" />
+		 <dwr:convert type="bean" class="br.com.safetycar.modelos.FornecedorDespesas" />
+		 <dwr:convert type="bean" class="br.com.safetycar.modelos.GastosVeiculos" />
+		 <dwr:convert type="bean" class="br.com.safetycar.modelos.VlComissaoEVendaVeiculo" />
+		 <dwr:convert type="bean" class="br.com.safetycar.modelos.relatorios.RelatorioVeiculosDisponiveis" />
+		 <dwr:convert type="bean" class="br.com.safetycar.modelos.Vendedor" />
+		 <dwr:convert type="bean" class="br.com.safetycar.modelos.Usuarios" />
+	</dwr:configuration>
+	
+	
+	<!-- Nosso bean referente a classe UsuarioBean, este será injetado na classe UsuarioAjax -->
+	<bean id="usuarioBean" class="br.com.adriano.bean.UsuarioBean"/>
+	<bean id="relatorioVeiculosDisponiveis" class="br.com.safetycar.modelos.relatorios.RelatorioVeiculosDisponiveis"/>
+	
+	
+</beans>
